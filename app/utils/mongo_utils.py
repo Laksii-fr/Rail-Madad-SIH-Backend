@@ -1,9 +1,10 @@
 from app.database import UsersCollection
-from app.database import VectorStores
-from app.database import UserProfiles
+from app.database import UserThreads
+from app.database import UserProfiles,IssuePriority
 from datetime import datetime
 from fastapi import HTTPException, status
 import app.models.model_types as modelType
+from datetime import datetime
 
 def save_user_info(email: str, sub_id: str = None, is_confirmed: bool = False):
     try:
@@ -53,7 +54,6 @@ def save_user_profile(userId, payload: modelType.UserProfile):
         "userID": userId,
         "UserName": payload.User_name,
         "UserMail": payload.User_email,
-        "OpenAPIkey": payload.OpenAPI_key,
         "createdAt": datetime.utcnow(),
         "updatedAt": datetime.utcnow(),
     }  # type: ignore
@@ -77,26 +77,67 @@ def save_user_profile(userId, payload: modelType.UserProfile):
             status_code=status.HTTP_409_CONFLICT,
             detail=f"Something went wrong during saving user profile in database.",
         )
-
+def save_user_thread(userId,thread_id,threadtoken,threadTitle):
+    new_threads = {
+        "userId": userId,
+        "Thread_id" : thread_id,
+        "ThreadToken" : threadtoken,
+        "threadTitle" : threadTitle,
+        "createdAt": datetime.utcnow(),
+        "updatedAt": datetime.utcnow(),
+    }  # type: ignore
     try:
-        doc = VectorStores.find(
-            filter={"vector_storeID": VecID},
-            projection={"_id": 0, "Own_key": 1}
-        ).sort([("createdAt", -1)]).limit(1)
+        UserThreads.insert_one(new_threads)
+    except Exception as e:
+        print(f"Error {e}")
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"Something went wrong during saving assistant in database.{e}",
+        )
+
+def save_issue_priority(userId,Issue,rate):
+    new_details = {
+        "userId": userId,
+        "Issue_Title" : Issue,
+        "Issue_Severity": rate
+    }
+    try:
+        IssuePriority.insert_one(new_details)
+    except Exception as e:
+        print(f"Error {e}")
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"Something went wrong during saving assistant in database.{e}",
+        )
+    
+def fetch_all_issue(user_id: str,Issue_Severity = None):
+    try:
+        # Base filter for user ID
+        filter_conditions = {"userId": user_id}
         
-        result = None
-        for document in doc:
-            result = document.get("Own_key")
-        
-        if not result:
-            print(f"No data found for Vector ID  {VecID}")
-            return ""
-        
-        print(f"Found data: {result}")
+        # Add search functionality for astName (case-insensitive regex search)
+        if Issue_Severity:
+            filter_conditions["Issue_Severity"] = {"$regex": Issue_Severity, "$options": "i"}
+
+        # Always sort by createdAt in descending order
+        cur = IssuePriority.find(
+            filter=filter_conditions, 
+            projection={
+                "_id": 0, 
+                "userId" : 1,
+                "Issue_Title" : 1,
+                "Issue_Severity" : 1
+            }
+        ).sort([("createdAt", -1)])
+
+        # Convert cursor to list
+        result = [doc for doc in cur]
+
         return result
+    
     except Exception as e:
         print(f"Error: {e}")
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="Something went wrong during fetching Vector Store."
+            detail=f"Something went wrong during fetching assistants.{e}",
         )

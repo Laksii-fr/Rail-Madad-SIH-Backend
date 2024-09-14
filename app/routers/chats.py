@@ -14,7 +14,29 @@ async def send_message(
 ):
     try:
         user_id = user.get('login_id')
-        chat_response = chat.send_message_to_api(message, threadToken, image)
+        chat_response = await chat.send_message_to_api(user_id,message, threadToken, image)
+        response = {
+            "status": True,
+            "message": "Chat Created successfully",
+            "data": chat_response
+        }
+        return response
+    except Exception as e:
+        return {
+            "status": False,
+            "message": f"An error occurred while creating chat.{e}",
+            "data": None
+        }
+    
+@router.post("/issue-prioritizer/")
+async def prioritizer(
+    message: str = Form(...),
+    user: dict = Depends(get_current_user),
+):
+    try:
+        user_id = user.get('login_id')
+        chat_response = await chat.send_topic_to_api(user_id,message)
+        print(chat_response)
         response = {
             "status": True,
             "message": "Chat Created successfully",
