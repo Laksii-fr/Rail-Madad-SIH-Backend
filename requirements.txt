@@ -64,4 +64,4 @@ websockets
 wrapt
 yarl
 boto3
-jwt
+pyjwt

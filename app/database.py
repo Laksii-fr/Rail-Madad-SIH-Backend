@@ -7,5 +7,4 @@ print('MongoDB Connected Successfully...')
 db = client[settings.MONGO_INITDB_DATABASE]
 
 UsersCollection = db.users_collection
-VectorStores = db.VectorStores
 UserProfiles = db.UserProfiles
