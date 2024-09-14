@@ -32,3 +32,11 @@ class UserProfile(BaseModel):
     User_name : str
     User_email : str
     PhoneNumber : int
+
+class CreateChat(BaseModel):
+    message : str
+    threadToken: Optional[str] = None
+
+class Prioritizer(BaseModel):
+    message : str
+    category : Literal['Train', 'Station', 'Ticket']

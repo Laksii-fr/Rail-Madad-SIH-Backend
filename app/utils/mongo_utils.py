@@ -95,10 +95,11 @@ def save_user_thread(userId,thread_id,threadtoken,threadTitle):
             detail=f"Something went wrong during saving assistant in database.{e}",
         )
 
-def save_issue_priority(userId,Issue,rate):
+def save_issue_priority(userId,Issue : modelType.Prioritizer,rate):
     new_details = {
         "userId": userId,
-        "Issue_Title" : Issue,
+        "category" : Issue.category,
+        "Issue_Title" : Issue.message,
         "Issue_Severity": rate
     }
     try:

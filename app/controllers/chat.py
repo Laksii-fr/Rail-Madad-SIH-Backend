@@ -1,6 +1,7 @@
 from fastapi import APIRouter, File, UploadFile, Form, Depends
 import app.utils.mongo_utils as mongo
 import app.helpers.api_helper as helper
+import app.models.model_types as modelType
 import requests,os
 
 API_URL = os.getenv('API_URL')
@@ -28,7 +29,7 @@ async def send_message_to_api(userId, message: str, ThreadToken: str = None, ima
     }
     # return response
 
-async def send_topic_to_api(userId,message: str):
-    data_message = await helper.send_topic_to_api(message)
-    mongo.save_issue_priority(userId,message,data_message)
+async def send_topic_to_api(userId,issue : modelType.Prioritizer):
+    data_message = await helper.send_topic_to_api(issue.message)
+    mongo.save_issue_priority(userId,issue,data_message)
     return data_message

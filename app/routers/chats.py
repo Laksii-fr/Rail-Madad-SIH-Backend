@@ -1,20 +1,19 @@
 from fastapi import APIRouter, File, UploadFile, Form, Depends
 from app.controllers.cognito import get_current_user
-import app.controllers.chat as chat
-
+import app.controllers.chat as controller
+import app.models.model_types as modelType
 router = APIRouter()
 
 @router.post("/create-chat/")
 async def send_message(
-    message: str = Form(...),
+    chat : modelType.CreateChat = Depends(),
     user: dict = Depends(get_current_user),
-    threadToken: str = Form(None),
     image: UploadFile = File(None)
     
 ):
     try:
         user_id = user.get('login_id')
-        chat_response = await chat.send_message_to_api(user_id,message, threadToken, image)
+        chat_response = await controller.send_message_to_api(user_id,chat.message, chat.threadToken, image)
         response = {
             "status": True,
             "message": "Chat Created successfully",
@@ -30,12 +29,12 @@ async def send_message(
     
 @router.post("/issue-prioritizer/")
 async def prioritizer(
-    message: str = Form(...),
+    issue : modelType.Prioritizer = Depends(),
     user: dict = Depends(get_current_user),
 ):
     try:
         user_id = user.get('login_id')
-        chat_response = await chat.send_topic_to_api(user_id,message)
+        chat_response = await controller.send_topic_to_api(user_id,issue)
         print(chat_response)
         response = {
             "status": True,
