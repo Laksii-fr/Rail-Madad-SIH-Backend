@@ -16,7 +16,11 @@ class Settings(BaseSettings):
         COGNITO_REGION: str
         COGNITO_CLIENT_ID: str
         COGNITO_CLIENT_SECRET: str
-
+        API_URL : str
+        DEFAULT_AST_NAME : str
+        DEFAULT_API_TOKEN : str
+        DEFAULT_TOPIC_AST_NAME : str
+        DEFAULT_TOPIC_API_TOKEN : str
 
         class Config:
                 env_file = './.env'
