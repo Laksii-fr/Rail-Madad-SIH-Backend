@@ -77,10 +77,11 @@ def save_user_profile(userId, payload: modelType.UserProfile):
             status_code=status.HTTP_409_CONFLICT,
             detail=f"Something went wrong during saving user profile in database.",
         )
-def save_user_thread(userId,thread_id,threadtoken,threadTitle):
+def save_user_thread(userId,issue_type,thread_id,threadtoken,threadTitle):
     new_threads = {
         "userId": userId,
         "Thread_id" : thread_id,
+        "issue_type" : issue_type,
         "ThreadToken" : threadtoken,
         "threadTitle" : threadTitle,
         "createdAt": datetime.utcnow(),
