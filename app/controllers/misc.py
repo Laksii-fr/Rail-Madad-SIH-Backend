@@ -13,3 +13,7 @@ async def anubhav(userId,Anubhav : model_type.SubmittAnubhav):
 async def get_all_anubhav(userId):
     get_all_Anubhav = mongo.get_all_Anubhav(userId)
     return get_all_Anubhav
+
+async def get_all_Suggestions(userId):
+    get_all_Suggesitons = mongo.get_all_Suggestions(userId)
+    return get_all_Suggesitons
