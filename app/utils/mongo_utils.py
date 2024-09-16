@@ -1,6 +1,6 @@
 from app.database import UsersCollection
 from app.database import UserThreads
-from app.database import UserProfiles,IssuePriority
+from app.database import UserProfiles,IssuePriority,Suggestions,Anubhav
 from datetime import datetime
 from fastapi import HTTPException, status
 import app.models.model_types as modelType
@@ -93,7 +93,7 @@ def save_user_thread(userId,issue_type,thread_id,threadtoken,threadTitle):
         print(f"Error {e}")
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail=f"Something went wrong during saving assistant in database.{e}",
+            detail=f"Something went wrong during saving Thread in database.{e}",
         )
 
 def save_issue_priority(userId,Issue,rate):
@@ -108,7 +108,7 @@ def save_issue_priority(userId,Issue,rate):
         print(f"Error {e}")
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail=f"Something went wrong during saving assistant in database.{e}",
+            detail=f"Something went wrong during saving Issue in database.{e}",
         )
     
 def fetch_all_issue(user_id: str,Issue_Severity = None):
@@ -140,5 +140,94 @@ def fetch_all_issue(user_id: str,Issue_Severity = None):
         print(f"Error: {e}")
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail=f"Something went wrong during fetching assistants.{e}",
+            detail=f"Something went wrong during fetching Issue.{e}",
+        )
+
+
+def save_suggestion(userId,suggestion_type,message):
+    new_details = {
+        "userId": userId,
+        "SuggestionType" : suggestion_type,
+        "Suggestion": message
+    }
+    try:
+        Suggestions.insert_one(new_details)
+        return "Thank you for your Suggestion"
+    except Exception as e:
+        print(f"Error {e}")
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"Something went wrong during saving Suggestion in database.{e}",
+        )
+    
+def save_anubhav(userId,Anubhavs : modelType.SubmittAnubhav):
+    new_details = {
+        "userId": userId,
+        "Rating" : Anubhavs.rating,
+        "Mode" : Anubhavs.Mode_type,
+        "Train_no." : Anubhavs.Train_no,
+        "Station" : Anubhavs.Station_name,
+        "AdditionalMessage": Anubhavs.message
+    }
+    try:
+        Anubhav.insert_one(new_details)
+        return "Thank you"
+    except Exception as e:
+        print(f"Error {e}")
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"Something went wrong during saving Anubhav in database.{e}",
+        )
+    
+def get_all_Suggestions(user_id: str):
+    try:
+        # Base filter for user ID
+        filter_conditions = {"userId": user_id}
+        
+        cur = Suggestions.find(
+            filter=filter_conditions, 
+            projection={
+                "_id": 0, 
+                "SuggestionType" : 1,
+                "Suggestion" : 1
+            }
+        ).sort([("createdAt", -1)])
+
+        # Convert cursor to list
+        result = [doc for doc in cur]
+
+        return result
+    
+    except Exception as e:
+        print(f"Error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"Something went wrong during fetching Suggestions.{e}",
+        )
+    
+
+def get_all_Anubhav(user_id: str):
+    try:
+        # Base filter for user ID
+        filter_conditions = {"userId": user_id}
+        
+        cur = Anubhav.find(
+            filter=filter_conditions, 
+            projection={
+                "_id": 0, 
+                "Mode" : 1,
+                "AdditionalMessage" : 1
+            }
+        ).sort([("createdAt", -1)])
+
+        # Convert cursor to list
+        result = [doc for doc in cur]
+
+        return result
+    
+    except Exception as e:
+        print(f"Error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"Something went wrong during fetching Issue.{e}",
         )

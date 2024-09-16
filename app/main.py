@@ -5,7 +5,7 @@ import uvicorn
 
 load_dotenv()
 from app.config import settings
-from app.routers import  auth, chats, user_profile, issue_severity
+from app.routers import  auth, chats, user_profile, misc
 app = FastAPI()
 
 origins = [settings.CLIENT_ORIGIN]
@@ -21,7 +21,8 @@ app.add_middleware(
 app.include_router(auth.router, tags=["Authentication"], prefix="/api/auth")
 app.include_router(user_profile.router, tags=["UserProfile"], prefix="/api/user_profile")
 app.include_router(chats.router, tags=["Chats"], prefix="/api/chats")
-app.include_router(issue_severity.router, tags=["Fetching Issues"], prefix="/api/Issue")
+# app.include_router(issue_severity.router, tags=["Fetching Issues"], prefix="/api/Issue")
+app.include_router(misc.router, tags=["Miscellaneous"], prefix="/api/miscellaneous")
 
 @app.get("/health")
 async def root():

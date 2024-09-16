@@ -32,3 +32,14 @@ class UserProfile(BaseModel):
     User_name : str
     User_email : str
     PhoneNumber : int
+
+
+class SubmittAnubhav(BaseModel):
+    rating : int
+    message: str
+    Mode_type : Literal[
+    "Train",
+    "Station",
+    ]
+    Train_no : Optional[str] = None 
+    Station_name: Optional[str] = None  

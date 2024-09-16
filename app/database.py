@@ -10,3 +10,5 @@ UsersCollection = db.users_collection
 UserThreads = db.UserThreads
 IssuePriority = db.IssuePriority
 UserProfiles = db.UserProfiles
+Suggestions = db.Suggestions
+Anubhav = db.Anubhav

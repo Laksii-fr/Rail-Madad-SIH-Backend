@@ -28,9 +28,6 @@ async def send_message(message: str, threadToken: str = None, image: UploadFile 
     response = requests.post(API_URL, data=data, files=files)
     return response.json()
 
-import requests
-
-import requests
 
 async def send_topic_to_api(message: str):
     # Prepare the data to be sent in the request
